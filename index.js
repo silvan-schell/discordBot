@@ -1,15 +1,24 @@
-import dotenv from 'dotenv'
-dotenv.config()
+const { Client, GatewayIntentBits } = require('discord.js');
+const {token } = require('./config.json');
 
-import { Client } from 'discord.js'
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.DirectMessages
-    ],
+client.once('ready', () => {
+	console.log('Ready!');
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'ping') {
+		await interaction.reply('Pong!');
+	} else if (commandName === 'server') {
+		await interaction.reply('Server info.');
+	} else if (commandName === 'user') {
+		await interaction.reply(interaction.user.username);
+	}
+});
+
+client.login(token);
